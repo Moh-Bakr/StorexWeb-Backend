@@ -22,6 +22,7 @@ class AuthController extends Controller
         return response([
                     'status' => 'success',
                     'message' => 'User created successfully',
+                    'user' => $user,
                      "authorization" => [
                         "token" => $token,
                         "type" => "bearer"
@@ -38,7 +39,7 @@ class AuthController extends Controller
                 'message' => 'Invalid credentials'
             ], Response::HTTP_UNAUTHORIZED);
         }
-        
+
         $token = $user->createToken('auth_token')->plainTextToken;
         return response([
             'status' => 'success',
@@ -46,6 +47,15 @@ class AuthController extends Controller
                 "token" => $token,
                 "type" => "bearer"
             ]
+        ], Response::HTTP_OK);
+    }
+
+    public function GetAllUsers(Request $request)
+    {
+        $users = User::all();
+        return response([
+            'status' => 'success',
+            'message' => $users
         ], Response::HTTP_OK);
     }
 }
