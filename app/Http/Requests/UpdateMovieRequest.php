@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreMovieRequest extends FormRequest
+class UpdateMovieRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,7 +28,7 @@ class StoreMovieRequest extends FormRequest
             'description' => 'required|string',
             'rate' => 'required|integer',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ];
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048|nullable',
+            ];
     }
 }
