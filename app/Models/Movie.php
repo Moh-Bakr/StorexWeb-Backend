@@ -19,6 +19,6 @@ class Movie extends Model
     ];
     
     protected $hidden = [
-        // 'image_public_id',
+        'image_public_id',
     ];
 }

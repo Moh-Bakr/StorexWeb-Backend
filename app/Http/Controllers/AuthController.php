@@ -8,16 +8,18 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Traits\ApiResponser;
 
 class AuthController extends Controller
 {
-    public function CreateUser(CreateUserRequest $request)
+    use ApiResponser;
+    public function createUser(CreateUserRequest $request)
     {
         $validated_data = $request->validated();
         $validated_data['password'] = Hash::make($validated_data['password']);
         $validated_data['birthdate'] = Carbon::parse($validated_data['birthdate'])->format('Y-m-d');
         $user = User::create($validated_data);
-
+        
         $token = $user->createToken('auth_token')->plainTextToken;
         return response([
                     'status' => 'success',
@@ -30,14 +32,11 @@ class AuthController extends Controller
                 ], Response::HTTP_CREATED);
     }
 
-    public function Login(Request $request)
+    public function login(Request $request)
     {
         $user  = User::where('email', $request['email'])->first();
         if (!$user || !Hash::check($request['password'], $user->password)) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Invalid credentials'
-            ], Response::HTTP_UNAUTHORIZED);
+            return $this->errorResponse('Invalid credentials', Response::HTTP_UNAUTHORIZED);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -49,13 +48,11 @@ class AuthController extends Controller
             ]
         ], Response::HTTP_OK);
     }
-
-    public function GetAllUsers(Request $request)
+    
+    public function GetAllUsers()
     {
-        $users = User::all();
-        return response([
-            'status' => 'success',
-            'message' => $users
-        ], Response::HTTP_OK);
+        $users = User::orderBy('id', 'asc')->get();
+        
+        return $this->createResponse('Users ', $users, Response::HTTP_OK);
     }
 }
